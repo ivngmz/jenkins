@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Test1') {
              steps {
-                   echo "+ Job has been runned"
+                   echo "+ Job has been runned "
                    echo "+ Job has been runned yet"
                 }
         }
