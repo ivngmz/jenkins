@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Test1 PR') {
 	     when {
-		branch 'PR-*'
+		branch "master"
 		  }
              steps {
                    echo "+ Job has been runned        "
