@@ -6,7 +6,7 @@ pipeline {
 		}
 
     stages {
-        stage('Test1 PR') {
+        stage('Test Push') {
 	     when {
 		branch "main"
 		  }
