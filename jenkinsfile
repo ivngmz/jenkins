@@ -11,14 +11,22 @@ public String descriptionFor(SCMSource source) {
     return "Pull request #" + getPayload().getNumber() + " event";
 }
 
+
+
 pipeline {
     agent any
+
+    parameters {
+	  string(name: 'payload', description: 'Payload received')
+		}
+
     stages {
         stage('Test1') {
              steps {
                    echo "+ Job has been runned        "
 		   script {
 			  sh 'printenv'	
+			  sh 'echo ${payload}'
 //		 	  PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
 //                 	   echo "+ PR number -> $PR" 
 //
