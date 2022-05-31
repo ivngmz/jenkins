@@ -6,8 +6,12 @@ pipeline {
 		}
 
     stages {
-        stage('Test1') {
+        stage('Test1 PR') {
+	     when {
+		branch 'PR-*'
+		  }
              steps {
+		   echo "Branch: ${BRANCH}"
                    echo "+ Job has been runned        "
 		   script {
 			  sh 'printenv'	
