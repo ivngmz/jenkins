@@ -24,10 +24,10 @@ pipeline {
                  	       echo "++ Current PR status -> $status_PR and merged -> $merged_PR "
 
                  	       // Only merged PR will be checked
-                 	       if (status_PR == 'closed' && merged_PR == 'true') {
+                 	       if ( status_PR == 'closed' && merged_PR == true ){
                  	           labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${PR}")
-                 	           echo "++ Found label:${labels}"
-				   echo "+++ This flow has beeen covered"
+                 	           echo "+++ Found label:${labels}"
+				   echo "+++ This flow has been covered"
 						   }
 				}
 			}  
