@@ -17,20 +17,22 @@ pipeline {
         stage('Test1') {
              steps {
                    echo "+ Job has been runned        "
-		   PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
-                    echo "+ PR number -> $PR" 
+		   script {	
+		 	  PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
+                 	   echo "+ PR number -> $PR" 
 
-                    if (PR != ''){
+                 	   if (PR != ''){
 
-                        status_PR = sh(returnStdout: true, script: "gh api --jq .state /repos/ivngmz/jenkins/pulls/${PR} ")
-                        echo "++ Current PR status -> $status_PR"
+                 	       status_PR = sh(returnStdout: true, script: "gh api --jq .state /repos/ivngmz/jenkins/pulls/${PR} ")
+                 	       echo "++ Current PR status -> $status_PR"
 
-                        // Only merged PR will be checked
-                        if (status_PR == "MERGED") {
-                            labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${PR}")
-                            echo "++ Found label:${labels}"
+                 	       // Only merged PR will be checked
+                 	       if (status_PR == "MERGED") {
+                 	           labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${PR}")
+                 	           echo "++ Found label:${labels}"
 						   }
-				}  
+				}
+			}  
                 }
         }
     }
