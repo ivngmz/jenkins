@@ -9,33 +9,34 @@ pipeline {
 
     stages {
         stage('Test Push') {
-	     when {
-		branch 'main'
-		  }
-             steps {
+            when {
+                branch 'main'
+            }
+            steps {
                    echo "+ Job has been runned"
-		   script {
-			  sh 'printenv'	
-		 	  PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
-                 	   echo "+ PR number -> $PR" 
+                script {
+                    sh 'printenv'	
+                    PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
+                            echo "+ PR number -> $PR" 
 
-                 	   if (PR != ''){
+                            if (PR != ''){
 
-                 	       status_PR = sh(returnStdout: true, script: "gh api --jq .state /repos/ivngmz/jenkins/pulls/${PR}")
-			       merged_PR = sh(returnStdout: true, script: "gh api --jq .merged /repos/ivngmz/jenkins/pulls/${PR}")
-                 	       echo "++ Current PR status -> $status_PR and merged -> $merged_PR "
+                                status_PR = sh(returnStdout: true, script: "gh api --jq .state /repos/ivngmz/jenkins/pulls/${PR}")
+                                merged_PR = sh(returnStdout: true, script: "gh api --jq .merged /repos/ivngmz/jenkins/pulls/${PR}")
+                                echo "++ Current PR status -> $status_PR and merged -> $merged_PR "
 
-                 	       // Only merged PR will be checked
-                 	       if ( status_PR.contains('closed') && merged_PR.contains('true') ){
-                 	           labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${PR}")
-                 	           echo "+++ Found label:${labels}"
-				   echo "+++ This flow has been covered"
-				   components='componentTest'
-						   }
-				}
-			}  
-                }
-	stage('Publish components') {
+                                // Only merged PR will be checked
+                                if ( status_PR.contains('closed') && merged_PR.contains('true') ){
+                                    labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${PR}")
+                                    echo "+++ Found label:${labels}"
+                        echo "+++ This flow has been covered"
+                        components='componentTest'
+                        }
+                    }
+                }  
+            }
+        }
+        stage('Publish components') {
             // Requires when execution if components
             when {
                 expression { components != null }
@@ -43,15 +44,15 @@ pipeline {
             steps {
                 script {
                     if (components) {
-                        echo "+ Publishing job for ob:${OB} components:${components}"
-                        sh "scripts/publish.sh ${OB} ${components}"
+                        domtest='test'
+                        echo "+ Publishing job for components:${components}"
+                        sh "scripts/publish.sh ${domtest} ${components}"
                     }
                     else {
                         echo "There is no components to publish"
                     }
                 }
             }
-        }
         }
     }
 }
