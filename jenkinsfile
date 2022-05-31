@@ -11,7 +11,6 @@ pipeline {
 		branch 'PR-*'
 		  }
              steps {
-		   echo "Branch: ${BRANCH}"
                    echo "+ Job has been runned        "
 		   script {
 			  sh 'printenv'	
