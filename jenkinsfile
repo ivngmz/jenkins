@@ -19,7 +19,7 @@ pipeline {
 
                  	   if (PR != ''){
 
-                 	       status_PR = sh(returnStdout: true, script: "gh api --jq .state /repos/ivngmz/jenkins/pulls/${PR} "
+                 	       status_PR = sh(returnStdout: true, script: "gh api --jq .state /repos/ivngmz/jenkins/pulls/${PR}")
 			       merged_PR = sh(returnStdout: true, script: "gh api --jq .merged /repos/ivngmz/jenkins/pulls/${PR}")
                  	       echo "++ Current PR status -> $status_PR"
 
