@@ -1,0 +1,22 @@
+import jenkins.scm.api.SCMSource
+public String descriptionFor(SCMSource source) {
+    String action = getPayload().getAction();
+    if (action == "closed") {
+        return "Pull request #" + getPayload().getNumber() + " closed";
+    }
+    else {
+        currentBuild.result = 'ABORTED'
+    }
+    return "Pull request #" + getPayload().getNumber() + " event";
+}
+pipeline {
+    agent any
+    stages {
+        stage('Test1') {
+             steps {
+                   echo "+ Job has been runned "
+                   echo "+ Job has been runned yet"
+                }
+        }
+    }
+}
