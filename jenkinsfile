@@ -16,11 +16,7 @@ pipeline {
     stages {
         stage('Test1') {
              steps {
-<<<<<<< HEAD
-                   echo "+ Job has been runned       "
-=======
-                   echo "+ Job has been runned"
->>>>>>> 3fb8a28f13fbcfffdb2e1e913a99122dba8b57f4
+                   echo "+ Job has been runned        "
                 }
         }
     }
