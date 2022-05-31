@@ -1,22 +1,3 @@
-import jenkins.scm.api.SCMSource
-
-public String descriptionFor(SCMSource source) {
-    String action = getPayload().getAction();
-    if (action == "closed") {
-        return "Pull request #" + getPayload().getNumber() + " closed";
-    }
-    else {
-        currentBuild.result = 'ABORTED'
-    }
-    return "Pull request #" + getPayload().getNumber() + " event";
-}
-
-public String getPayload() {
-return payload;
-}
-
-
-
 pipeline {
     agent any
 
@@ -28,10 +9,8 @@ pipeline {
         stage('Test1') {
              steps {
                    echo "+ Job has been runned        "
-		   getPayload()
 		   script {
 			  sh 'printenv'	
-			  sh 'echo ${payload}'
 //		 	  PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
 //                 	   echo "+ PR number -> $PR" 
 //
