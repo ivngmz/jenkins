@@ -1,3 +1,5 @@
+components=
+
 pipeline {
     agent any
 
@@ -9,7 +11,6 @@ pipeline {
         stage('Test Push') {
 	     when {
 		branch 'main'
-		triggeredBy 'EventTriggerCause'
 		  }
              steps {
                    echo "+ Job has been runned"
@@ -29,10 +30,28 @@ pipeline {
                  	           labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${PR}")
                  	           echo "+++ Found label:${labels}"
 				   echo "+++ This flow has been covered"
+				   components='componentTest'
 						   }
 				}
 			}  
                 }
+	stage('Publish components') {
+            // Requires when execution if components
+            when {
+                expression { components != null }
+            }
+            steps {
+                script {
+                    if (components) {
+                        echo "+ Publishing job for ob:${OB} components:${components}"
+                        sh "scripts/publish.sh ${OB} ${components}"
+                    }
+                    else {
+                        echo "There is no components to publish"
+                    }
+                }
+            }
+        }
         }
     }
 }
