@@ -18,7 +18,7 @@ pipeline {
              steps {
                    echo "+ Job has been runned        "
 		   script {
-#			  sh 'printenv'	
+			  sh 'printenv'	
 #		 	  PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
 #                 	   echo "+ PR number -> $PR" 
 #
