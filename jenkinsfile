@@ -11,6 +11,10 @@ public String descriptionFor(SCMSource source) {
     return "Pull request #" + getPayload().getNumber() + " event";
 }
 
+public String getPayload() {
+return payload;
+}
+
 
 
 pipeline {
@@ -24,6 +28,7 @@ pipeline {
         stage('Test1') {
              steps {
                    echo "+ Job has been runned        "
+		   echo getPayload()
 		   script {
 			  sh 'printenv'	
 			  sh 'echo ${payload}'
