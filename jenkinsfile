@@ -34,7 +34,7 @@ pipeline {
                    echo "+ Job has been runned"
                 script {
                     sh 'printenv'
-                    env.PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls")
+                    env.PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls").replaceAll("\\s","")
                             echo "+ PR number -> $PR" 
 
                             if (PR != ''){
