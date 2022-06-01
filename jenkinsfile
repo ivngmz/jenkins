@@ -1,4 +1,5 @@
-components=
+components =
+PR =
 
 pipeline {
     agent any
@@ -29,7 +30,7 @@ pipeline {
                                 if ( status_PR.contains('closed') && merged_PR.contains('true') ){
                                     labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${PR}")
                                     echo "+++ Found label:${labels}"
-                        echo "+++ This flow has been covered"
+                        echo "+++ This flow has been covered "
                         components='componentTest'
                         }
                     }
