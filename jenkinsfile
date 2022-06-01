@@ -1,5 +1,5 @@
-components =
-PR =
+components = ''
+PR = ''
 
 pipeline {
     agent any
@@ -9,6 +9,23 @@ pipeline {
     }
 
     stages {
+        stage('Checkout branch') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    branchName = env.BRANCH_NAME
+                    echo "+++ Found branch: ${branchName}"
+                }
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: branchName]],
+                    userRemoteConfigs: [[credentialsId: 'github',
+                                        url: "git@github.com:ivngmz/jenkins.git"]]
+                ])
+            }
+        }
         stage('Test Push') {
             when {
                 branch 'main'
@@ -16,7 +33,7 @@ pipeline {
             steps {
                    echo "+ Job has been runned"
                 script {
-                    sh 'printenv'	
+                    sh 'printenv'
                     PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
                             echo "+ PR number -> $PR" 
 
@@ -31,7 +48,7 @@ pipeline {
                                     labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${PR}")
                                     echo "+++ Found label:${labels}"
                         echo "+++ This flow has been covered "
-                        components='componentTest'
+                        components = 'componentTest'
                         }
                     }
                 }  
@@ -44,7 +61,7 @@ pipeline {
             }
             steps {
                 script {
-                    if (components) {
+                    if ( PR != '' ) {
                         domtest='test'
                         echo "+ Publishing job for components:${components}"
                         sh "scripts/publish.sh ${domtest} ${components}"
