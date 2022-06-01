@@ -34,18 +34,18 @@ pipeline {
                    echo "+ Job has been runned"
                 script {
                     sh 'printenv'
-                    PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
+                    env.PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls ")
                             echo "+ PR number -> $PR" 
 
                             if (PR != ''){
 
-                                status_PR = sh(returnStdout: true, script: "gh api --jq .state /repos/ivngmz/jenkins/pulls/${PR}")
-                                merged_PR = sh(returnStdout: true, script: "gh api --jq .merged /repos/ivngmz/jenkins/pulls/${PR}")
+                                status_PR = sh(returnStdout: true, script: "gh api --jq .state /repos/ivngmz/jenkins/pulls/${env.PR}")
+                                merged_PR = sh(returnStdout: true, script: "gh api --jq .merged /repos/ivngmz/jenkins/pulls/${env.PR}")
                                 echo "++ Current PR status -> $status_PR and merged -> $merged_PR "
 
                                 // Only merged PR will be checked
                                 if ( status_PR.contains('closed') && merged_PR.contains('true') ){
-                                    labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${PR}")
+                                    labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${env.PR}")
                                     echo "+++ Found label:${labels}"
                         echo "+++ This time flow has been covered "
                         components = 'componentTest'
@@ -60,7 +60,9 @@ pipeline {
                 expression { components != null }
             }
             steps {
+		
                 script {
+		    PR = env.PR
                     if ( PR != '' ) {
                         domtest='test'
                         echo "+ Publishing job for components:${components}"
