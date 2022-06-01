@@ -9,23 +9,23 @@ pipeline {
     }
 
     stages {
-        stage('Checkout branch') {
-            when {
-                branch 'main'
-            }
-            steps {
-                script {
-                    branchName = env.BRANCH_NAME
-                    echo "+++ Found branch: ${branchName}"
-                }
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: branchName]],
-                    userRemoteConfigs: [[credentialsId: 'github',
-                                        url: "git@github.com:ivngmz/jenkins.git"]]
-                ])
-            }
-        }
+       // stage('Checkout branch') {
+       //     when {
+       //         branch 'main'
+       //     }
+       //     steps {
+       //         script {
+       //             branchName = env.BRANCH_NAME
+       //             echo "+++ Found branch: ${branchName}"
+       //         }
+       //         checkout([
+       //             $class: 'GitSCM',
+       //             branches: [[name: branchName]],
+       //             userRemoteConfigs: [[credentialsId: 'github',
+       //                                 url: "git@github.com:ivngmz/jenkins.git"]]
+       //         ])
+       //     }
+       // }
         stage('Test Push') {
             when {
                 branch 'main'
