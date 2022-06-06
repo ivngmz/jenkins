@@ -6,6 +6,7 @@ pipeline {
 
     environment {
         GITHUB_TOKEN = credentials('GITHUB_TOKEN')
+	GH_NO_UPDATE_NOTIFIER = 1
     }
 
     stages {
