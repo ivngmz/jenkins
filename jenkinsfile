@@ -47,7 +47,7 @@ pipeline {
                                 if ( status_PR == 'closed' && merged_PR == 'true' ){
                                     labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${env.PR}")
                                     echo "+++ Found label:${labels}"
-                        echo "+++ This time flow has been covered "
+                        echo "+++ This time flow has been covered"
                         components = 'componentTest'
                         }
                     }
