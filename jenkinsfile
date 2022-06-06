@@ -36,7 +36,7 @@ pipeline {
                 script {
                     sh 'printenv'
                     env.PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls").replaceAll("\\s","")
-                            echo "+ PR number -> $PR" 
+                            echo "+ PR number -> env.PR" 
 
                             if (PR != ''){
 
