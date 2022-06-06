@@ -36,9 +36,9 @@ pipeline {
                 script {
                     sh 'printenv'
                     env.PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls").replaceAll("\\s","")
-                            echo "+ PR number -> env.PR" 
+                            echo "+ PR number -> ${env.PR}" 
 
-                            if (PR != ''){
+                            if (env.PR != ''){
 
                                 status_PR = sh(returnStdout: true, script: "gh api --jq .state /repos/ivngmz/jenkins/pulls/${env.PR}").replaceAll("\\s","")
                                 merged_PR = sh(returnStdout: true, script: "gh api --jq .merged /repos/ivngmz/jenkins/pulls/${env.PR}").replaceAll("\\s","")
