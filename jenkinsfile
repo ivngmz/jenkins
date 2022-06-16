@@ -38,9 +38,6 @@ pipeline {
             }
         }
         stage('Test map') {
-            when {
-                branch 'main'
-            }
             steps {
                 script {
 		    cur_subscription = subscription[CLUSTER]
