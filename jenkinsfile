@@ -1,3 +1,9 @@
+
+
+cluster = ['cluster1': 'shared-azure',
+			'cluster2': 'cluster1-name']
+subscription = ['cluster1': '111111',
+				'cluster2': 'cluster2-name']
 components = ''
 PR = ''
 
@@ -7,6 +13,10 @@ pipeline {
     environment {
         GITHUB_TOKEN = credentials('GITHUB_TOKEN')
 	GH_NO_UPDATE_NOTIFIER = 1
+    }
+
+    parameters{
+	string(name: 'CLUSTER', defaultValue: 'cluster1', description: 'Cluster def')
     }
 
     stages {
@@ -32,7 +42,7 @@ pipeline {
                 branch 'main'
             }
             steps {
-                   echo "+ Job has been runned already"
+                   echo "+ Job has been runned"
                 script {
                     sh 'printenv'
                     env.PR = sh(returnStdout: true, script: "gh api --jq .[].number /repos/ivngmz/jenkins/commits/$GIT_COMMIT/pulls").replaceAll("\\s","")
@@ -48,8 +58,8 @@ pipeline {
                                 if ( status_PR == 'closed' && merged_PR == 'true' ){
                                     labels = sh(returnStdout: true, script: "gh api --jq '.labels.[].name' /repos/ivngmz/jenkins/pulls/${env.PR}")
                                     echo "+++ Found label:${labels}"
-                        echo "+++ This time flow has been covered"
-                        components = 'componentTest'
+                        	echo "+++ This time flow has been covered"
+                        	components = 'componentTest'
                         }
                     }
                 }  
