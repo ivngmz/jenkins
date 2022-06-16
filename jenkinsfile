@@ -39,7 +39,7 @@ pipeline {
         stage('Test map') {
             steps {
                 script {
-		    cur_subscription = subscription[CLUSTER.'name]
+		    cur_subscription = subscription[CLUSTER.'name']
                     echo "+++ Found subscription: ${cur_subscription}"
 		    cur_subscription = cluster[CLUSTER.'subscription']
                     echo "+++ Found cluster: ${cur_subscription}"
