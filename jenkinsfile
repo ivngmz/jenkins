@@ -1,9 +1,9 @@
 
 
-cluster = ['cluster1': 'shared-azure',
-			'cluster2': 'cluster1-name']
+cluster = ['cluster1': 'cluster1-name',
+           'cluster2': 'cluster1-name']
 subscription = ['cluster1': '111111',
-				'cluster2': 'cluster2-name']
+                'cluster2': '222222']
 components = ''
 PR = ''
 
@@ -35,6 +35,19 @@ pipeline {
                     userRemoteConfigs: [[credentialsId: 'github',
                                         url: "git@github.com:ivngmz/jenkins.git"]]
                 ])
+            }
+        }
+        stage('Test map') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+		    cur_subscription = subscription[CLUSTER]
+                    echo "+++ Found subscription: ${cur_subscription}"
+		    cur_subscription = cluster[CLUSTER]
+                    echo "+++ Found cluster: ${cur_subscription}"
+                }
             }
         }
         stage('Test Push') {
