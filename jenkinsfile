@@ -1,9 +1,8 @@
 
 
-cluster = ['cluster1': 'cluster1-name',
-           'cluster2': 'cluster1-name']
-subscription = ['cluster1': '111111',
-                'cluster2': '222222']
+cluster = ['cluster1': ['name': 'cluster1-name', 'subscription': '111111'],
+           'cluster2': ['name': 'cluster1-name'], 'subscription': '111111']
+
 components = ''
 PR = ''
 
@@ -40,9 +39,9 @@ pipeline {
         stage('Test map') {
             steps {
                 script {
-		    cur_subscription = subscription[CLUSTER]
+		    cur_subscription = subscription[CLUSTER.'name']
                     echo "+++ Found subscription: ${cur_subscription}"
-		    cur_subscription = cluster[CLUSTER]
+		    cur_subscription = cluster[CLUSTER.'subscription']
                     echo "+++ Found cluster: ${cur_subscription}"
                 }
             }
