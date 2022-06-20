@@ -25,7 +25,6 @@ pipeline {
            }
            steps {
                script {
-		   sh 'printenv'
                    branchName = env.BRANCH_NAME
                    echo "+++ Found branch: ${branchName}"
                }
@@ -40,6 +39,7 @@ pipeline {
        stage('Test map') {
            steps {
                script {
+		   sh 'printenv'
                    cur_subscription = cluster [ CLUSTER ].name
                    echo "+++ Found subscription: ${cur_subscription}"
                    cur_subscription = cluster [ CLUSTER ].subscription
