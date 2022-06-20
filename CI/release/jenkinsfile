@@ -25,6 +25,7 @@ pipeline {
            }
            steps {
                script {
+		   echo "+++ This is a release test"
                    branchName = env.BRANCH_NAME
                    echo "+++ Found branch: ${branchName}"
                }
