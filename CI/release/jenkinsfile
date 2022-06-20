@@ -25,6 +25,7 @@ pipeline {
            }
            steps {
                script {
+		   sh 'printenv'
                    branchName = env.BRANCH_NAME
                    echo "+++ Found branch: ${branchName}"
                }
