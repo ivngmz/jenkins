@@ -1,52 +1,99 @@
+#!/usr/bin/env groovy
 
-
-cluster = ['cluster1': ['name': 'cluster1-name', 'subscription': '111111'],
-           'cluster2': ['name': 'cluster1-name', 'subscription': '111111']]
-
-components = ''
-PR = ''
+discardedServices = 'service|swaggers'
+branchname = ''
 
 pipeline {
+
     agent any
 
     environment {
         GITHUB_TOKEN = credentials('GITHUB_TOKEN')
-	GH_NO_UPDATE_NOTIFIER = 1
+        GH_NO_UPDATE_NOTIFIER = 1
     }
 
-    parameters{
-	string(name: 'CLUSTER', defaultValue: 'cluster1', description: 'Cluster def')
+    options {
+        ansiColor('xterm')
+        timeout(time: 180, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '15'))
+    }
+
+    parameters {
+        string(name: 'TAG_RELEASE', defaultValue: '', description: 'Required Release Tag')
+        string(name: 'OB', defaultValue: '', description: 'Required Release Tag')
     }
 
     stages {
-       stage('Checkout branch') {
-           when {
-               branch 'main'
-           }
-           steps {
-               script {
-		   echo "+++ This is a release test"
-                   branchName = env.BRANCH_NAME
-                   echo "+++ Found branch: ${branchName}"
-               }
-               checkout([
-                   $class: 'GitSCM',
-                   branches: [[name: branchName]],
-                   userRemoteConfigs: [[credentialsId: 'github',
+        stage('Checkout branch') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    echo "+++ This is a release test"
+                    branchName = main
+                    echo "+++ Found branch: ${branchName}"
+                }
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: branchName]],
+                    userRemoteConfigs: [[credentialsId: 'github',
                                        url: "git@github.com:ivngmz/jenkins.git"]]
-               ])
+                ])
            }
-       }
-       stage('Test map') {
-           steps {
-               script {
-		   sh 'printenv'
-                   cur_subscription = cluster [ CLUSTER ].name
-                   echo "+++ Found subscription: ${cur_subscription}"
-                   cur_subscription = cluster [ CLUSTER ].subscription
-                   echo "+++ Found cluster: ${cur_subscription}"
-               }
-           }
-       }
-   }
+        }
+        stage('Artifact tags publish') {
+            steps {
+                script {
+                    echo "+++ Looking for components with shas"
+                    // Mejorar commando
+                    components= sh(returnStdout: true, script: "cat files/list_components_sha.yml | grep -E '\b[0-9a-w]{40}\b' | grep -E -v '${discardedServices}' | sed 's/^  //g' | cut -d ':' -f 1 | uniq | sort")
+                    // Assert rompe ejecucion, comprobar
+                    if (components) {
+                        components = components.replaceAll("\n", ",").replaceAll(",\$", "")
+                        echo "+++ Expected Components to tag: ${components}"
+
+                        //labels = sh(returnStdout: true, script: "gh pr view ${params.PR} --json labels --jq .labels[].name")
+                        // ? echo "+++ Found pull request labels: ${labels.replace('\n', ' ')}"
+                        sh "./delivery/scripts/artifact_tagger.sh --ob=${ob.toLowerCase()} --components=${components} --branch=${branchname}"
+                    } else {
+                        echo "+++ No components tags to publish"
+                    }
+                }
+            }
+        }
+        stage('Check component has been published and tag has been added') {
+            steps {
+
+            }
+        }
+        stage('Create Release tag and publish') {
+            steps {
+                script {
+                    sh """
+                        # Probar
+                        notes=$(sed -n '/${TAG_RELEASE}/,/${TAG_RELEASE_PREVIOUS}/p' files/release_notes.md | sed '$d' | sed '1d')
+                        draft_response=$(gh api --method POST   /repos/ivngmz/jenkins/releases  -f tag_name="${TAG_RELEASE}"  -f target_commitish="${branchname}"  -f name='${TAG_RELEASE}'  -f body="${notes}"  -F draft=true  -F prerelease=false  -F generate_release_notes=false)
+                        draft_array_values=($(echo ${draft_response} | jq '.id,.tag_name'))
+                        echo "Recovered values: ${draft_array_values[@]}"
+                        if [[ ${draft_array_values[@]} ]]; then
+                          gh api --method PATCH "/repos/ivngmz/jenkins/releases/${draft_array_values[0]}" -F draft=false -F prerelease=false
+                        fi
+                    """
+                }
+            }
+        }
+        stage('Update Repository') {
+            steps {
+                script {
+                    sh """
+                        git status && git diff
+                        git add files/
+                        git commit --message 'chore: update components versions'
+                        git push origin HEAD:${branchName}
+                    """
+                }
+            }
+        }
+    }
 }

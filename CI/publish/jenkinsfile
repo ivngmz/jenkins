@@ -1,0 +1,52 @@
+
+
+cluster = ['cluster1': ['name': 'cluster1-name', 'subscription': '111111'],
+           'cluster2': ['name': 'cluster1-name', 'subscription': '111111']]
+
+components = ''
+PR = ''
+
+pipeline {
+    agent any
+
+    environment {
+        GITHUB_TOKEN = credentials('GITHUB_TOKEN')
+	GH_NO_UPDATE_NOTIFIER = 1
+    }
+
+    parameters{
+	string(name: 'CLUSTER', defaultValue: 'cluster1', description: 'Cluster def')
+    }
+
+    stages {
+       stage('Checkout branch') {
+           when {
+               branch 'main'
+           }
+           steps {
+               script {
+		   echo "+++ This is a release test"
+                   branchName = env.BRANCH_NAME
+                   echo "+++ Found branch: ${branchName}"
+               }
+               checkout([
+                   $class: 'GitSCM',
+                   branches: [[name: branchName]],
+                   userRemoteConfigs: [[credentialsId: 'github',
+                                       url: "git@github.com:ivngmz/jenkins.git"]]
+               ])
+           }
+       }
+       stage('Test map') {
+           steps {
+               script {
+		   sh 'printenv'
+                   cur_subscription = cluster [ CLUSTER ].name
+                   echo "+++ Found subscription: ${cur_subscription} "
+                   cur_subscription = cluster [ CLUSTER ].subscription
+                   echo "+++ Found cluster: ${cur_subscription}"
+               }
+           }
+       }
+   }
+}

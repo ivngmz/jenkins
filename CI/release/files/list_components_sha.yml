@@ -1,0 +1,7 @@
+release: 6.0
+
+service_versions:
+  agora: 5.0
+  spiderman: 5.3
+  ronin: 4f98e670cec3455ad32d9241dec0b24834213421
+  turboman: this_0
